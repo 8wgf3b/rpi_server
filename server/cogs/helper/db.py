@@ -23,16 +23,18 @@ Tasks = Table('Tasks', metadata,
 
 metadata.create_all(engine)
 
+
 def create_new_task(channel_id, cron_exp, func, params):
-    del_stmt = delete(Tasks).where(and_(Tasks.columns.channel_id==channel_id,
-                                        Tasks.columns.cron_exp==cron_exp,
-                                        Tasks.columns.func==func,
-                                        Tasks.columns.params==params))
+    del_stmt = delete(Tasks).where(and_(Tasks.columns.channel_id == channel_id,
+                                        Tasks.columns.cron_exp == cron_exp,
+                                        Tasks.columns.func == func,
+                                        Tasks.columns.params == params))
     del_res = connection.execute(del_stmt)
     stmt = insert(Tasks).values(channel_id=channel_id, cron_exp=cron_exp,
                                 func=func, params=params)
     result_proxy = connection.execute(stmt)
     return result_proxy.rowcount
+
 
 def fetch_update_to_be_run(base):
     stmt = select([Tasks])
@@ -49,6 +51,7 @@ def fetch_update_to_be_run(base):
         insert_proxy = connection.execute(stmt, updated)
     return results
 
+
 def update_next_run(base):
     stmt = update(Tasks)
     stmt = stmt.where(Tasks.columns.next_run <= base)
@@ -56,10 +59,12 @@ def update_next_run(base):
     result_proxy = connection.execute(stmt)
     return result_proxy
 
+
 def clear_channel_tasks(cid):
     stmt = delete(Tasks).where(Tasks.columns.channel_id == cid)
     delete_proxy = connection.execute(stmt)
     return delete_proxy.rowcount
+
 
 def delete_by_ids(ids):
     if not isinstance(ids, list):
@@ -68,9 +73,11 @@ def delete_by_ids(ids):
     delete_proxy = connection.execute(stmt)
     return delete_proxy.rowcount
 
+
 def fetch_channel_tasks(cid):
     stmt = select([Tasks]).where(Tasks.columns.channel_id == cid)
     return connection.execute(stmt).fetchall()
+
 
 def pretty_channel_tasks(cid):
     results = fetch_channel_tasks(cid)
@@ -83,9 +90,11 @@ def pretty_channel_tasks(cid):
         text = 'Nothing scheduled yet :)'
     return text
 
+
 def fetch_all_tasks():
     stmt = select([Tasks])
     return connection.execute(stmt).fetchall()
+
 
 if __name__ == '__main__':
     base = datetime.utcnow()

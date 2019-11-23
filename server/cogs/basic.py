@@ -6,12 +6,12 @@ from .helper.db import pretty_channel_tasks, delete_by_ids
 
 creator_id = int(os.getenv('CREATOR_ID'))
 
+
 class Basic(commands.Cog):
 
     def __init__(self, client):
         self.client = client
     #  events
-
 
     #  commands
     @commands.command()
