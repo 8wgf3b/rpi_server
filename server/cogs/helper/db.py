@@ -3,15 +3,18 @@ from sqlalchemy import (Table, Column, String, Integer, DateTime,
                         insert, select, update, delete, and_)
 from datetime import datetime
 from croniter import croniter
+import logging
+
+logger = logging.getLogger('rpi4.db')
 
 
 def get_next_run(cron_exp, base):
     return croniter(cron_exp, base).get_next(datetime)
 
-
 engine = create_engine('sqlite:///databases/bot.db')
 connection = engine.connect()
 metadata = MetaData()
+logger.debug('Connected to engine')
 
 Tasks = Table('Tasks', metadata,
               Column('id', Integer(), primary_key=True),
@@ -22,34 +25,45 @@ Tasks = Table('Tasks', metadata,
               Column('params', String(100)))
 
 metadata.create_all(engine)
+logger.debug('Create all tables')
 
 
 def create_new_task(channel_id, cron_exp, func, params):
-    del_stmt = delete(Tasks).where(and_(Tasks.columns.channel_id == channel_id,
-                                        Tasks.columns.cron_exp == cron_exp,
-                                        Tasks.columns.func == func,
-                                        Tasks.columns.params == params))
-    del_res = connection.execute(del_stmt)
-    stmt = insert(Tasks).values(channel_id=channel_id, cron_exp=cron_exp,
-                                func=func, params=params)
-    result_proxy = connection.execute(stmt)
-    return result_proxy.rowcount
+    try:
+        del_stmt = delete(Tasks).where(and_(Tasks.columns.channel_id == channel_id,
+                                            Tasks.columns.cron_exp == cron_exp,
+                                            Tasks.columns.func == func,
+                                            Tasks.columns.params == params))
+        del_res = connection.execute(del_stmt)
+        logger.debug('Why are you even deleting? Cant you add select stmt to check')
+        next_run = get_next_run(cron_exp, datetime.utcnow())
+        stmt = insert(Tasks).values(channel_id=channel_id, cron_exp=cron_exp,
+                                    next_run=next_run, func=func, params=params)
+        result_proxy = connection.execute(stmt)
+        logger.debug('Created task but add an exception too :)')
+        return result_proxy.rowcount
+    except:
+        logger.exception('failed to create new task')
 
 
 def fetch_update_to_be_run(base):
-    stmt = select([Tasks])
-    stmt = stmt.where(Tasks.columns.next_run <= base)
-    results = connection.execute(stmt).fetchall()
-    if len(results) != 0:
-        stmt = delete(Tasks).where(Tasks.columns.next_run <= base)
-        delete_proxy = connection.execute(stmt)
-        keys = ['channel_id', 'cron_exp', 'next_run', 'func', 'params']
-        updated = [dict(zip(keys, result[1:])) for result in results]
-        for d in updated:
-            d['next_run'] = get_next_run(d['cron_exp'], base)
-        stmt = insert(Tasks)
-        insert_proxy = connection.execute(stmt, updated)
-    return results
+    try:
+        stmt = select([Tasks])
+        stmt = stmt.where(Tasks.columns.next_run <= base)
+        results = connection.execute(stmt).fetchall()
+        if len(results) != 0:
+            stmt = delete(Tasks).where(Tasks.columns.next_run <= base)
+            delete_proxy = connection.execute(stmt)
+            keys = ['channel_id', 'cron_exp', 'next_run', 'func', 'params']
+            updated = [dict(zip(keys, result[1:])) for result in results]
+            for d in updated:
+                d['next_run'] = get_next_run(d['cron_exp'], base)
+            stmt = insert(Tasks)
+            insert_proxy = connection.execute(stmt, updated)
+        return results
+    except:
+        logger.exception('failed to fetch, to be run tasks')
+        return None
 
 
 def update_next_run(base):
@@ -61,22 +75,31 @@ def update_next_run(base):
 
 
 def clear_channel_tasks(cid):
-    stmt = delete(Tasks).where(Tasks.columns.channel_id == cid)
-    delete_proxy = connection.execute(stmt)
-    return delete_proxy.rowcount
+    try:
+        stmt = delete(Tasks).where(Tasks.columns.channel_id == cid)
+        delete_proxy = connection.execute(stmt)
+        return delete_proxy.rowcount
+    except:
+        logger.exception(f'failed to clear {cid} tasks')
 
 
 def delete_by_ids(ids):
-    if not isinstance(ids, list):
-        ids = [ids]
-    stmt = delete(Tasks).where(Tasks.columns.id.in_(ids))
-    delete_proxy = connection.execute(stmt)
-    return delete_proxy.rowcount
+    try:
+        if not isinstance(ids, list):
+            ids = [ids]
+        stmt = delete(Tasks).where(Tasks.columns.id.in_(ids))
+        delete_proxy = connection.execute(stmt)
+        return delete_proxy.rowcount
+    except:
+        logger.exception(f'failed to delete {ids}')
 
 
 def fetch_channel_tasks(cid):
-    stmt = select([Tasks]).where(Tasks.columns.channel_id == cid)
-    return connection.execute(stmt).fetchall()
+    try:
+        stmt = select([Tasks]).where(Tasks.columns.channel_id == cid)
+        return connection.execute(stmt).fetchall()
+    except:
+        logger.exception(f'failed to fetch {cid} tasks')
 
 
 def pretty_channel_tasks(cid):
@@ -97,6 +120,4 @@ def fetch_all_tasks():
 
 
 if __name__ == '__main__':
-    base = datetime.utcnow()
-    create_new_task('a', '* * * * *', 'b', 'c')
-    print(fetch_update_to_be_run(base))
+    pass
