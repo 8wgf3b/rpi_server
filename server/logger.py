@@ -54,7 +54,7 @@ mail_params['password'] = os.getenv('MAIL_PASS')
 
 email_handler = EmailTRFH(mail_params, 'temp/temp.log', when="m", interval=30, backupCount=5)
 email_handler.setFormatter(formatter)
-email_handler.setLevel(logging.INFO)
+email_handler.setLevel(logging.WARNING)
 
 logger = logging.getLogger('rpi4')
 logger.setLevel(logging.DEBUG)

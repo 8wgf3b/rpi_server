@@ -39,7 +39,7 @@ def subreddit_posts(sub='all', time='day', limit=5, type='top'):
 
 def random_image_sub(params):
     post = next(subreddit_posts(sub=params, limit=1, type='random'))
-    embed = Embed(title=params, description=post.title)
+    embed = Embed(title=params, description=post.title[:200])
     try:
         embed.set_image(url=post.url)
     except:
@@ -56,7 +56,7 @@ def top_day_sub(params):
     embed = Embed(title=sub, description=description)
     for post in submisssions:
         try:
-            embed.add_field(name=post.title, value=post.shortlink, inline=False)
+            embed.add_field(name=post.title[:200], value=post.shortlink, inline=False)
         except:
             logger.exception('failed to create an embed')
             continue
