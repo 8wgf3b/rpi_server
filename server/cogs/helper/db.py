@@ -4,6 +4,7 @@ from sqlalchemy import (Table, Column, String, Integer, DateTime,
 from datetime import datetime
 from croniter import croniter
 import logging
+import os
 
 logger = logging.getLogger('rpi4.db')
 
@@ -11,7 +12,7 @@ logger = logging.getLogger('rpi4.db')
 def get_next_run(cron_exp, base):
     return croniter(cron_exp, base).get_next(datetime)
 
-engine = create_engine('sqlite:///databases/bot.db')
+engine = create_engine(os.getenv('DATABASE_URL','sqlite:///databases/bot.db'))
 connection = engine.connect()
 metadata = MetaData()
 logger.debug('Connected to engine')
