@@ -59,7 +59,7 @@ email_handler.setLevel(logging.WARNING)
 logger = logging.getLogger('rpi4')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(email_handler)
-logger.addHandler(file_handler)
+#logger.addHandler(file_handler)
 #logger.addHandler(stream_handler)
 
 
