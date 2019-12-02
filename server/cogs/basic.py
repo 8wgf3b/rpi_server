@@ -23,7 +23,6 @@ class Basic(commands.Cog):
         await ctx.send(f'ping: {round(self.client.latency * 1000)}ms')
 
     @commands.command()
-    @commands.check(lambda x: x.author.id == creator_id)
     async def sched(self, ctx, *, text):
         spl = text.split()
         cid = str(ctx.message.channel.id)
@@ -31,7 +30,6 @@ class Basic(commands.Cog):
         logger.info(f'new task for {cid}')
 
     @commands.command()
-    @commands.check(lambda x: x.author.id == creator_id)
     async def dtbi(self, ctx, *, text):
         spl = text.split()
         cid = str(ctx.message.channel.id)
@@ -49,7 +47,6 @@ class Basic(commands.Cog):
         logger.info(f'cleared all {cid} tasks')
 
     @commands.command()
-    @commands.check(lambda x: x.author.id == creator_id)
     async def gct(self, ctx):
         cid = str(ctx.message.channel.id)
         text = pretty_channel_tasks(cid)
