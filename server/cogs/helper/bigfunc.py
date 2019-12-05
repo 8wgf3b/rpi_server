@@ -1,4 +1,5 @@
 from .reddit import top_day_sub as rtop, random_image_sub as rdom
+from .reddit import discord_harvester as dscd
 import logging
 
 '''
@@ -12,13 +13,13 @@ files=None, delete_after=None, nonce=None
 logger = logging.getLogger('rpi4.bigfunc')
 
 
-def echo(string):
+async def echo(string):
     return {'content': string}
 
 
-def bigfunc(func, params):
+async def bigfunc(func, params):
     logging.info(f'bigfunc {func}')
-    return globals()[func](params)
+    return await globals()[func](params)
 
 
 if __name__ == '__main__':
