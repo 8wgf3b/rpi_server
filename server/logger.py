@@ -43,7 +43,7 @@ file_handler.setLevel(logging.INFO)
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
-file_handler.setLevel(logging.INFO)
+stream_handler.setLevel(logging.INFO)
 
 mail_params = dict()
 mail_params['host'] = os.getenv('MAILHOST')
