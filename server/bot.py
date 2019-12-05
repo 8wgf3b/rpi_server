@@ -11,6 +11,7 @@ from logger import logger
 token = os.getenv('DISCORD_TOKEN')
 client = commands.Bot(command_prefix='.')
 
+
 @client.event
 async def on_ready():
     logger.info('Bot is online')
@@ -26,15 +27,16 @@ async def cron_tasks():
     logger.debug('fetched tasks to be run')
     for result in to_do:
         try:
-            message = bigfunc(result.func, result.params)
+            message = await bigfunc(result.func, result.params)
             cid = int(result.channel_id)
             channel = client.get_channel(cid)
             await channel.send(**message)
             logger.debug(f'successful task#{result.id}')
-        except:
+        except Exception as e:
             logger.exception(f'Unable to send a message for task#{result.id}')
             continue
     logger.info('Finished cron looper')
+
 
 @client.command()
 async def load(ctx, extension):

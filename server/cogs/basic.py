@@ -3,6 +3,8 @@ import os
 from discord.ext import commands
 from .helper.db import create_new_task, clear_channel_tasks
 from .helper.db import pretty_channel_tasks, delete_by_ids
+from .helper.db import append_bot_name, delete_botname_by_ids
+from .helper.db import fetch_all_bots, pretty_bots
 import logging
 
 
@@ -41,6 +43,25 @@ class Basic(commands.Cog):
 
     @commands.command()
     @commands.check(lambda x: x.author.id == creator_id)
+    async def botd(self, ctx, *, text):
+        spl = text.split()
+        spl = [int(x) for x in spl]
+        delete_botname_by_ids(spl)
+        logger.info(f'deleted bots#{spl}')
+
+    @commands.command()
+    @commands.check(lambda x: x.author.id == creator_id)
+    async def bota(self, ctx, *, text):
+        append_bot_name(text.lower())
+        logger.info(f'appended bot {text}')
+
+    @commands.command()
+    async def botl(self, ctx):
+        text = pretty_bots()
+        await ctx.send(text)
+
+    @commands.command()
+    @commands.check(lambda x: x.author.id == creator_id)
     async def cct(self, ctx):
         cid = str(ctx.message.channel.id)
         clear_channel_tasks(cid)
@@ -56,6 +77,7 @@ class Basic(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=100):
+        cid = str(ctx.message.channel.id)
         await ctx.channel.purge(limit=amount)
         logger.info(f'cleared {amount} messages from {cid}')
 

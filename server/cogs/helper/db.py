@@ -12,7 +12,8 @@ logger = logging.getLogger('rpi4.db')
 def get_next_run(cron_exp, base):
     return croniter(cron_exp, base).get_next(datetime)
 
-engine = create_engine(os.getenv('DATABASE_URL','sqlite:///databases/bot.db'))
+
+engine = create_engine(os.getenv('DATABASE_URL', 'sqlite:///databases/bot.db'))
 connection = engine.connect()
 metadata = MetaData()
 logger.debug('Connected to engine')
@@ -25,8 +26,50 @@ Tasks = Table('Tasks', metadata,
               Column('func', String(20), nullable=False),
               Column('params', String(100)))
 
+Rbots = Table('Rbots', metadata,
+              Column('id', Integer(), primary_key=True),
+              Column('bot', String(50), nullable=False, unique=True))
+
 metadata.create_all(engine)
 logger.debug('Create all tables')
+
+
+def append_bot_name(bot_name):
+    try:
+        stmt = insert(Rbots).values(bot=bot_name)
+        result_proxy = connection.execute(stmt)
+        logger.debug('append bot to list')
+        return result_proxy.rowcount
+    except:
+        logger.exception('failed to append new bot')
+
+
+def fetch_all_bots():
+    stmt = select([Rbots])
+    return connection.execute(stmt).fetchall()
+
+
+def pretty_bots():
+    results = fetch_all_bots()
+    fin_s = ['reddit bot list']
+    for result in results:
+        s = f'{result.id} {result.bot}'
+        fin_s.append(s)
+    text = '\n'.join(fin_s)
+    if not text:
+        text = 'Nothing bots yet :)'
+    return text
+
+
+def delete_botname_by_ids(ids):
+    try:
+        if not isinstance(ids, list):
+            ids = [ids]
+        stmt = delete(Rbots).where(Rbots.columns.id.in_(ids))
+        delete_proxy = connection.execute(stmt)
+        return delete_proxy.rowcount
+    except:
+        logger.exception(f'failed to delete bot {ids}')
 
 
 def create_new_task(channel_id, cron_exp, func, params):
