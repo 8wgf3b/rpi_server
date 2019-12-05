@@ -42,6 +42,7 @@ class Basic(commands.Cog):
         logger.info(f'deleted tasks#{spl}')
 
     @commands.command()
+    @commands.check(lambda x: x.author.id == creator_id)
     async def botd(self, ctx, *, text):
         spl = text.split()
         spl = [int(x) for x in spl]
@@ -49,6 +50,7 @@ class Basic(commands.Cog):
         logger.info(f'deleted bots#{spl}')
 
     @commands.command()
+    @commands.check(lambda x: x.author.id == creator_id)
     async def bota(self, ctx, *, text):
         append_bot_name(text.lower())
         logger.info(f'appended bot {text}')
