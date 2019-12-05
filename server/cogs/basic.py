@@ -50,7 +50,7 @@ class Basic(commands.Cog):
 
     @commands.command()
     async def bota(self, ctx, *, text):
-        append_bot_name(text)
+        append_bot_name(text.lower())
         logger.info(f'appended bot {text}')
 
     @commands.command()

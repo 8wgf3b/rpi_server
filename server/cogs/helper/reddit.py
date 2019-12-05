@@ -97,8 +97,8 @@ async def discord_harvester(period):
     botslist = fetch_all_bots()
     botslist = {x.bot for x in botslist}
     links = dict()
-    sub = [x for x in sub if x['author'] not in botslist]
-    com = [x for x in com if x['author'] not in botslist]
+    sub = [x for x in sub if x['author'].lower() not in botslist]
+    com = [x for x in com if x['author'].lower() not in botslist]
     for item in sub:
         temp = find_discord_link(item['selftext'])
         temp += find_discord_link(item['title'])
