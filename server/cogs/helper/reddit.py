@@ -6,7 +6,7 @@ from random import choice
 import logging
 import aiohttp
 import re
-from .db import fetch_all_bots
+import asyncio
 
 
 logger = logging.getLogger('rpi4.reddit')
@@ -67,7 +67,24 @@ async def top_day_sub(params):
 
 
 def find_discord_link(text):
-    return re.findall(r'discord.gg/[a-zA-Z0-9\-]*', text)
+    unfil_links = re.findall(r'discord.gg/[a-zA-Z0-9\-]*', text)
+    return [f'https://{x}' for x in unfil_links]
+
+
+async def link_checker(link, lim):
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(link) as r:
+                invite_page = await r.text()
+                members = re.findall(r"with (.+?) other", invite_page)[0]
+                members = int(members.replace(',', ''))
+                if members <= lim:
+                    print(link)
+                    return True
+    except Exception as e:
+        print(link)
+        logger.exception('Faulty discord link?')
+    return False
 
 
 async def term_searcher(term, after='30m'):
@@ -92,13 +109,10 @@ async def term_searcher(term, after='30m'):
     return sub_data, com_data
 
 
-async def discord_harvester(period):
+async def discord_harvester(lim='100'):
+    lim = int(lim)
     sub, com = await term_searcher('discord.gg')
-    botslist = fetch_all_bots()
-    botslist = {x.bot for x in botslist}
     links = dict()
-    sub = [x for x in sub if x['author'].lower() not in botslist]
-    com = [x for x in com if x['author'].lower() not in botslist]
     for item in sub:
         temp = find_discord_link(item['selftext'])
         temp += find_discord_link(item['title'])
@@ -112,7 +126,8 @@ async def discord_harvester(period):
 
     message = ''
     for k, v in links.items():
-        message += f'{v}\nhttps://{k}\n'
+        if await link_checker(k, lim):
+            message += f'{v}\n{k}\n'
 
     return {'content': message}
 
