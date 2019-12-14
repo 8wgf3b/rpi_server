@@ -30,8 +30,17 @@ Rbots = Table('Rbots', metadata,
               Column('id', Integer(), primary_key=True),
               Column('bot', String(50), nullable=False, unique=True))
 
+Rusers = Table('Rusers', metadata,
+               Column('id', Integer(), primary_key=True),
+               Column('user', String(50), nullable=False),
+               Column('channel_id', String(50), nullable=False))
+
 metadata.create_all(engine)
 logger.debug('Create all tables')
+
+'''
+bot table funcs
+'''
 
 
 def append_bot_name(bot_name):
@@ -70,6 +79,11 @@ def delete_botname_by_ids(ids):
         return delete_proxy.rowcount
     except:
         logger.exception(f'failed to delete bot {ids}')
+
+
+'''
+tasks table funcs
+'''
 
 
 def create_new_task(channel_id, cron_exp, func, params):
@@ -161,6 +175,14 @@ def pretty_channel_tasks(cid):
 def fetch_all_tasks():
     stmt = select([Tasks])
     return connection.execute(stmt).fetchall()
+
+
+'''
+user table funcs
+'''
+
+
+
 
 
 if __name__ == '__main__':
