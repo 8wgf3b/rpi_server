@@ -30,10 +30,6 @@ Rbots = Table('Rbots', metadata,
               Column('id', Integer(), primary_key=True),
               Column('bot', String(50), nullable=False, unique=True))
 
-Rusers = Table('Rusers', metadata,
-               Column('id', Integer(), primary_key=True),
-               Column('user', String(50), nullable=False),
-               Column('channel_id', String(50), nullable=False))
 
 metadata.create_all(engine)
 logger.debug('Create all tables')

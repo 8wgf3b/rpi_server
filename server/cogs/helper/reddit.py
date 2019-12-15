@@ -7,6 +7,7 @@ import logging
 import aiohttp
 import re
 import asyncio
+from collections import defaultdict
 
 
 logger = logging.getLogger('rpi4.reddit')
@@ -79,7 +80,7 @@ async def link_checker(link, lim):
                 members = re.findall(r"with (.+?) other", invite_page)[0]
                 members = int(members.replace(',', ''))
                 if members <= lim:
-                    print(link)
+                    #  print(link)
                     return True
     except Exception as e:
         print(link)
@@ -132,5 +133,58 @@ async def discord_harvester(lim='100'):
     return {'content': message}
 
 
+async def fetch_user_daily(redditor):
+    sub_url = 'https://api.pushshift.io/reddit/submission/search'
+    com_url = 'https://api.pushshift.io/reddit/comment/search'
+    params = {'author': redditor,
+              'after': '1d',
+              'size': 500}
+
+    async with aiohttp.ClientSession() as session:
+        params['fields'] = ','.join(['title', 'selftext', 'id'])
+        async with session.get(sub_url, params=params) as r:
+            sub_data = (await r.json())['data']
+            logger.info(f'searched submission data for u/{redditor}')
+
+    async with aiohttp.ClientSession() as session:
+        params['fields'] = ','.join(['body', 'id', 'link_id'])
+        async with session.get(com_url, params=params) as r:
+            com_data = (await r.json())['data']
+            for comment in com_data:
+                comment['link_id'] = comment['link_id'].split('_')[1]
+            logger.info(f'searched comments data for u/{redditor}')
+    return sub_data, com_data
+
+
+async def user_track(redditor):
+    sub, com = await fetch_user_daily(redditor)
+    post_ids = defaultdict(lambda: "")
+    for post in sub:
+        id, title, body = post['id'], post['title'], post['selftext']
+        if len(post_ids[id]) < len(title):
+            post_ids[id] = title
+        if len(post_ids[id]) < len(body):
+            post_ids[id] = body
+
+    for comment in com:
+        id, body = comment['link_id'], comment['body']
+        if len(post_ids[id]) < len(body):
+            post_ids[id] = body
+
+    post_ids = [(k, v) for k, v in post_ids.items()]
+    post_ids = sorted(post_ids, key=lambda x: len(x[1]), reverse=True)
+    description = f'{redditor} activity for the past 24 hrs'
+    embed = Embed(title=redditor, description=description)
+    for link in post_ids[:10]:
+        try:
+            embed.add_field(name=link[1][:200],
+                            value=f'https://redd.it/{link[0]}',
+                            inline=False)
+        except:
+            logger.exception('failed to create an embed')
+            continue
+    return {'embed': embed}
+
+
 if __name__ == '__main__':
-    print(asyncio.run(discord_harvester())['content'])
+    print(asyncio.run(user_track('mbowsy'))['content'])
