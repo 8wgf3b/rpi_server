@@ -175,6 +175,8 @@ async def user_track(redditor):
     post_ids = sorted(post_ids, key=lambda x: len(x[1]), reverse=True)
     description = f'{redditor} activity for the past 24 hrs'
     embed = Embed(title=redditor, description=description)
+    if len(post_ids) == 0:
+        return None
     for link in post_ids[:10]:
         try:
             embed.add_field(name=link[1][:200],
