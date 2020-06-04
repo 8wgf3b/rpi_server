@@ -105,4 +105,6 @@ venv.bak/
 *.db
 *.log
 server/temp/*
+server/configs/*.yml
+server/logs/*
 !server/temp/.gitkeep

@@ -1,42 +1,20 @@
 import discord
 from discord.ext import commands, tasks
 import asyncio
-from cogs.helper.bigfunc import bigfunc
-from cogs.helper.db import fetch_update_to_be_run
 from datetime import datetime
 import os
+import yaml
 from logger import logger
 
 
-token = os.getenv('DISCORD_TOKEN')
+with open('configs/token.yml', 'r') as f:
+    token = yaml.safe_load(f)['Token']
 client = commands.Bot(command_prefix='.')
 
 
 @client.event
 async def on_ready():
     logger.info('Bot is online')
-    cron_tasks.start()
-
-
-@tasks.loop(minutes=30)
-async def cron_tasks():
-    await client.wait_until_ready()
-    logger.info('Starting cron looper')
-    base = datetime.utcnow()
-    to_do = fetch_update_to_be_run(base)
-    logger.debug('fetched tasks to be run')
-    for result in to_do:
-        try:
-            message = await bigfunc(result.func, result.params)
-            cid = int(result.channel_id)
-            channel = client.get_channel(cid)
-            await channel.send(**message)
-            logger.debug(f'successful task#{result.id}')
-        except TypeError:
-            logger.info('Empty message')
-        except Exception as e:
-            logger.exception(f'Unable to send a message for task#{result.id}')
-    logger.info('Finished cron looper')
 
 
 @client.command()

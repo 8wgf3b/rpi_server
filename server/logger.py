@@ -1,7 +1,7 @@
 import logging
 import logging.handlers
 from datetime import datetime
-import os
+import yaml
 import smtplib
 
 
@@ -12,7 +12,7 @@ class EmailTRFH(logging.handlers.TimedRotatingFileHandler):
     def mail_report(self):
         try:
             msg = (f"""From:{mail_params['from']}
-Subject: log reports \n
+Subject: {mail_params['sub']} \n
 To: {mail_params['to']} \n""")
             with open(self.baseFilename, 'r') as logs:
                 content = logs.read()
@@ -37,7 +37,7 @@ logger = logging.getLogger('rpi4')
 logger.setLevel(logging.WARNING)
 
 formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(funcName)s: %(message)s')
-file_handler = logging.FileHandler(f'logs/{today().strftime("%d-%m-%Y")}.log')
+file_handler = logging.handlers.TimedRotatingFileHandler(f'logs/log', when='midnight')
 file_handler.setFormatter(formatter)
 file_handler.setLevel(logging.INFO)
 
@@ -45,21 +45,17 @@ stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 stream_handler.setLevel(logging.INFO)
 
-mail_params = dict()
-mail_params['host'] = os.getenv('MAILHOST')
-mail_params['port'] = int(os.getenv('MAILPORT'))
-mail_params['from'] = os.getenv('FROM')
-mail_params['to'] = os.getenv('TO')
-mail_params['password'] = os.getenv('MAIL_PASS')
+with open('configs/mail_params.yml', 'r') as stream:
+    mail_params = yaml.safe_load(stream)
 
-email_handler = EmailTRFH(mail_params, 'temp/temp.log', when="m", interval=30, backupCount=5)
+email_handler = EmailTRFH(mail_params, 'temp/temp.log', when="h", interval=3, backupCount=5)
 email_handler.setFormatter(formatter)
 email_handler.setLevel(logging.WARNING)
 
-logger = logging.getLogger('rpi4')
+logger = logging.getLogger('TS')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(email_handler)
-#logger.addHandler(file_handler)
+logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
 
