@@ -19,6 +19,14 @@ class Basic(commands.Cog):
     async def ping(self, ctx):
         logger.debug('ping command')
         await ctx.send(f'ping_rpi: {round(self.client.latency * 1000)}ms')
+        
+    @commands.command()
+    async def plic(self, ctx):
+        logger.debug('placeholder pic command')
+        file = discord.File('temp/plic.jpg', filename='plic.jpg', spoiler=False)
+        embed = discord.Embed()
+        embed.set_image(url="attachment://plic.jpg")
+        await ctx.send(file=file, embed=embed)  
 
 
 def setup(client):
