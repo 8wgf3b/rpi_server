@@ -30,7 +30,7 @@ async def cron_tasks():
             message = await bigfunc(result.func, result.params)
             cid = int(result.channel_id)
             channel = client.get_channel(cid)
-            await channel.send(**message, delete_after=60)
+            await channel.send(**message, delete_after=21600)
             logger.debug(f'successful task#{result.id}')
         except TypeError:
             logger.info('Empty message')
