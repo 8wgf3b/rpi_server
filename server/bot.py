@@ -12,6 +12,10 @@ token = os.getenv('DISCORD_TOKEN')
 client = commands.Bot(command_prefix='.')
 
 
+def is_me(m):
+    return m.author == client.user
+
+
 @client.event
 async def on_ready():
     logger.info('Bot is online')
@@ -30,6 +34,10 @@ async def cron_tasks():
             message = await bigfunc(result.func, result.params)
             cid = int(result.channel_id)
             channel = client.get_channel(cid)
+            if message == 'clear':
+                await channel.purge(limit=100, check=is_me)
+                logger.debug(f'Deleted 100 messages in {cid}')
+                continue
             await channel.send(**message)
             logger.debug(f'successful task#{result.id}')
         except TypeError:

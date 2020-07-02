@@ -21,7 +21,9 @@ async def echo(string):
 async def bigfunc(func, params):
     logging.info(f'bigfunc {func}')
     return await globals()[func](params)
-
+    
+async def clear(string):
+    return 'clear' 
 
 if __name__ == '__main__':
     print(globals().keys())
