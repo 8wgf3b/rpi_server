@@ -74,11 +74,7 @@ class Basic(commands.Cog):
         logger.info(f'fetching {cid} tasks')
         await ctx.send(text)
 
-    @commands.command()
-    async def gcid(self, ctx):
-        cid = str(ctx.message.channel.id)
-        await ctx.send(cid)
-        
+   
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=100):
