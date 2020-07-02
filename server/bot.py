@@ -22,7 +22,7 @@ async def on_ready():
     cron_tasks.start()
 
 
-@tasks.loop(minutes=30)
+@tasks.loop(minutes=5)
 async def cron_tasks():
     await client.wait_until_ready()
     logger.info('Starting cron looper')
