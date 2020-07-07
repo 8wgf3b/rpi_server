@@ -137,7 +137,7 @@ async def fetch_user_daily(redditor):
     sub_url = 'https://api.pushshift.io/reddit/submission/search'
     com_url = 'https://api.pushshift.io/reddit/comment/search'
     params = {'author': redditor,
-              'after': '1d',
+              'after': '30h',
               'size': 500}
 
     async with aiohttp.ClientSession() as session:
