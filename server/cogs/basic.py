@@ -19,6 +19,17 @@ class Basic(commands.Cog):
     async def ping(self, ctx):
         logger.debug('ping command')
         await ctx.send(f'ping_rpi: {round(self.client.latency * 1000)}ms')
+ 
+    @commands.command()
+    async def gcid(self, ctx):
+        logger.debug('gcid command')
+        await ctx.send(ctx.message.channel.id)
+
+    @commands.command()
+    async def gaid(self, ctx):
+        logger.debug('gcid command')
+        await ctx.send(ctx.message.author.id)
+        
         
     @commands.command()
     async def plic(self, ctx):
