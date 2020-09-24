@@ -52,7 +52,7 @@ email_handler = EmailTRFH(mail_params, 'temp/temp.log', when="h", interval=3, ba
 email_handler.setFormatter(formatter)
 email_handler.setLevel(logging.WARNING)
 
-logger = logging.getLogger('TS')
+logger = logging.getLogger('rpi4')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(email_handler)
 logger.addHandler(file_handler)

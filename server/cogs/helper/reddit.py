@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-logger = logging.getLogger('rpi4.reddit')
+logger = logging.getLogger('rpi4.reddithelper')
 
 SMALL_SIZE = 6
 MEDIUM_SIZE = 8
@@ -31,7 +31,7 @@ async def get_user_data(user):
     logger.debug('fetching last 30 days stats')
     pdata = await pushshift_fetcher('post', params)
     cdata = await pushshift_fetcher('comment', params)
-    logger.info('fetched last 40 days stats')
+    logger.info('fetched last 30 days stats')
 
     for i in pdata['aggs']['subreddit']:
         sub_df[i['key']]['p_30'] = i['doc_count']
