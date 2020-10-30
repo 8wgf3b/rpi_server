@@ -1,6 +1,7 @@
 from .reddit import top_day_sub as rtop, random_image_sub as rdom
 from .reddit import discord_harvester as dscd
 from .reddit import user_track as ustk
+from .reddit import hot_pic  as hpic, top_pic as tpic
 import logging
 
 '''
