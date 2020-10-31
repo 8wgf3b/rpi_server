@@ -8,7 +8,8 @@ import aiohttp
 import re
 import asyncio
 from collections import defaultdict
-
+from random import choice
+from .util import aiofy
 
 logger = logging.getLogger('rpi4.reddit')
 reddit = praw.Reddit(client_id=os.environ['CLIENT_ID'],
@@ -186,6 +187,17 @@ async def user_track(redditor):
             logger.exception('failed to create an embed')
             continue
     return {'embed': embed}
+
+
+async def hot_pic(subs):
+    post = next(subreddit_posts(sub=subs, limit=1, type='hot'))
+    return {'content': f'{post.title}\n{post.url}'}
+
+
+async def top_pic(subs):
+    sub = choice(subs.split('+'))
+    post = next(subreddit_posts(sub=sub, limit=1, type='top'))
+    return {'content': f'{post.title}\n{post.url}'}
 
 
 if __name__ == '__main__':

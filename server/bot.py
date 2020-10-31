@@ -37,7 +37,7 @@ async def cron_tasks():
             await channel.send(**message)
             logger.debug(f'successful task#{result.id}')
         except TypeError:
-            logger.info('Empty message')
+            logger.exception('Empty message')
         except Exception as e:
             logger.exception(f'Unable to send a message for task#{result.id}')
     logger.info('Finished cron looper')
