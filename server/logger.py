@@ -52,7 +52,7 @@ mail_params['from'] = os.getenv('FROM')
 mail_params['to'] = os.getenv('TO')
 mail_params['password'] = os.getenv('MAIL_PASS')
 
-email_handler = EmailTRFH(mail_params, 'temp/temp.log', when="m", interval=30, backupCount=5)
+email_handler = EmailTRFH(mail_params, 'temp/temp.log', when="H", interval=4, backupCount=5)
 email_handler.setFormatter(formatter)
 email_handler.setLevel(logging.WARNING)
 
