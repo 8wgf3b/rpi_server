@@ -3,6 +3,7 @@ import os
 from discord.ext import commands
 import logging
 from pprint import pprint
+from .helper.qooper import DiscordFeeder
 
 
 logger = logging.getLogger('rpi4.basic')
@@ -13,10 +14,12 @@ class Basic(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+        self.qfeed = DiscordFeeder('databases/idx.json', 42069)
+
     #  events
     @commands.Cog.listener()
     async def on_message(self, message):
-        pprint(message)
+        await self.qfeed.save_ids(message)
 
     #  commands
     @commands.command()
