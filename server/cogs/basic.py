@@ -4,10 +4,14 @@ from discord.ext import commands
 import logging
 from pprint import pprint
 from .helper.qooper import DiscordFeeder
+import yaml
 
 
 logger = logging.getLogger('rpi4.basic')
-#  creator_id = int(os.getenv('CREATOR_ID'))
+with open('configs/filter.yml', 'r') as f:
+    dic = yaml.safe_load(f)
+    creator = dic['CREATOR']
+    tracked_grp = dic['GROUP']
 
 
 class Basic(commands.Cog):
@@ -18,6 +22,7 @@ class Basic(commands.Cog):
 
     #  events
     @commands.Cog.listener()
+    @commands.check(lambda x: x.guild.id == tracked_grp)
     async def on_message(self, message):
         await self.qfeed.save_ids(message)
 

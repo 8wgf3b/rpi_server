@@ -13,14 +13,12 @@ except ModuleNotFoundError:
 class DiscordFeeder:
     def __init__(self, idloc, port):
         self.q = qconnection.QConnection(host='localhost', port=port)
-        self.q.open()
-        self.q.sendAsync('f', 2)
-        self.q.close()
         self.idloc = idloc
         self.idx = {}
     
     async def save_ids(self, message):
         await self.update_idx(message.author.id, message.author.name)
+        # print(message.created_at)
         await self.update_idx(message.guild.id, message.guild.name)
         await self.update_idx(message.channel.id, message.channel.name)
 
