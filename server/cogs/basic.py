@@ -22,9 +22,9 @@ class Basic(commands.Cog):
 
     #  events
     @commands.Cog.listener()
-    @commands.check(lambda x: x.guild.id == tracked_grp)
     async def on_message(self, message):
-        await self.qfeed.save_ids(message)
+        if message.guild.id == tracked_grp:
+            await self.qfeed.save_ids(message)
 
     #  commands
     @commands.command()
