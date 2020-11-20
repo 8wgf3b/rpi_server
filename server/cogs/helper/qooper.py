@@ -49,9 +49,9 @@ class DiscordFeeder:
         channel = np.string_(str(message.channel.id))
         text = bytes(message.content, 'utf-8')
         dt = message.created_at
-        time = (np.datetime64(dt) - np.datetime64(dt, 'D')).astype('timedelta64[ms]')
+        time = (np.datetime64(dt) - np.datetime64(dt, 'D')).astype('timedelta64[ns]')
         dt = np.datetime64(dt, 'D')
-        row = [dt, time, author, channel, text]
+        row = [time, author, dt, channel, text]
         table = np.string_('discord')
         print(row)
         try:
