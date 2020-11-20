@@ -55,7 +55,7 @@ class DiscordFeeder:
         table = np.string_('discord')
         print(row)
         try:
-            self.q.sendAsync("upsert", table, row) 
+            self.q.sendAsync(".u.upd", table, row) 
         except Exception as e:
             print(e)
 
