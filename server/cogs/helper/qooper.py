@@ -24,10 +24,6 @@ class DiscordFeeder:
         self.update_idx(message.author.id, message.author.name)
         self.update_idx(message.guild.id, message.guild.name)
         self.update_idx(message.channel.id, message.channel.name)
-        dt = message.created_at
-        time = (np.datetime64(dt) - np.datetime64(dt, 'D')).astype('timedelta64[ms]')
-        dt = np.datetime64(dt, 'D')
-        print(dt, time)
 
     def update_idx(self, key, value):
         if key not in self.idx:
@@ -49,6 +45,13 @@ class DiscordFeeder:
 
     def save_message(self, message):
         self.save_ids(message)
+        author = np.string_(str(message.author.id))
+        channel = np.string_(str(message.channel.id))
+        text = bytes(message.content, 'utf-8')
+        dt = message.created_at
+        time = (np.datetime64(dt) - np.datetime64(dt, 'D')).astype('timedelta64[ms]')
+        dt = np.datetime64(dt, 'D')
+        print(dt, time)
         try:
             pass
         except QException:
