@@ -18,7 +18,7 @@ class Basic(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.qfeed = DiscordFeeder('databases/idx.json', 42069)
+        self.qfeed = DiscordFeeder('databases/idx.json', 5011)
 
     #  events
     @commands.Cog.listener()

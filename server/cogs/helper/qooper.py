@@ -12,8 +12,8 @@ except ModuleNotFoundError:
 
 class DiscordFeeder:
     def __init__(self, idloc, port):
+        self.q = qconnection.QConnection(host='localhost', port=port)
         try:
-            self.q = qconnection.QConnection(host='localhost', port=port)
             self.q.open()
         except ConnectionRefusedError:
             print('oops')
@@ -51,11 +51,13 @@ class DiscordFeeder:
         dt = message.created_at
         time = (np.datetime64(dt) - np.datetime64(dt, 'D')).astype('timedelta64[ms]')
         dt = np.datetime64(dt, 'D')
-        print(dt, time)
+        row = [dt, time, author, channel, text]
+        table = np.string_('discord')
+        print(row)
         try:
-            pass
-        except QException:
-            pass
+            self.q.sendAsync("upsert", table, row) 
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
