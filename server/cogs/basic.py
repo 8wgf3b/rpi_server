@@ -23,8 +23,8 @@ class Basic(commands.Cog):
     #  events
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.guild.id == tracked_grp:
-            await self.qfeed.save_ids(message)
+        # if message.guild.id == tracked_grp:
+        self.qfeed.save_ids(message)
 
     #  commands
     @commands.command()
