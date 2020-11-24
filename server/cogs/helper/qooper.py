@@ -3,6 +3,7 @@ from qpython import qconnection
 from qpython.qcollection import qlist, QDictionary
 from qpython.qtype import QException
 import numpy as np
+from datetime import timedelta
 try:
     from .utils import asyncify
 except ModuleNotFoundError:
@@ -48,7 +49,7 @@ class DiscordFeeder:
         author = np.string_(str(message.author.id))
         channel = np.string_(str(message.channel.id))
         text = bytes(message.content, 'utf-8')
-        dt = message.created_at
+        dt = message.created_at + timedelta(minutes=30, hours=5)
         time = (np.datetime64(dt) - np.datetime64(dt, 'D')).astype('timedelta64[ns]')
         dt = np.datetime64(dt, 'D')
         row = [time, author, dt, channel, text]
