@@ -56,12 +56,10 @@ class DiscordFeeder:
         table = np.string_('discord')
         print(row)
         try:
-            self.q.sendAsync(".u.upd", table, row) 
+            self.q.sendAsync(".u.upd", table, row, single_char_strings = True) 
         except Exception as e:
             print(e)
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    x = DiscordFeeder('data/idx.json', 42069)
-    loop.run_until_complete(x.load_idx())
+    pass
