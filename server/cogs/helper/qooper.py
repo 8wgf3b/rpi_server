@@ -1,25 +1,32 @@
+import websockets
 import json
 from qpython import qconnection
 from qpython.qcollection import qlist, QDictionary
 from qpython.qtype import QException
 import numpy as np
 from datetime import timedelta
+import asyncio
 try:
     from .utils import asyncify
 except ModuleNotFoundError:
     from utils import asyncify
-    import asyncio
 
 
 class DiscordFeeder:
-    def __init__(self, idloc, port):
-        self.q = qconnection.QConnection(host='localhost', port=port)
+    def __init__(self, idloc, tport, cport, rport):
+        self.q = qconnection.QConnection(host='localhost', port=tport)
+        self.cport = cport
+        self.rport = rport
         try:
             self.q.open()
         except ConnectionRefusedError:
             print('oops')
         self.idloc = idloc
         self.load_idx()
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.qclient())
+        loop.run_until_complete(self.rtsalert())
+        loop.run_until_complete(self.cep())
     
     def save_ids(self, message):
         self.update_idx(message.author.id, message.author.name)
@@ -60,6 +67,15 @@ class DiscordFeeder:
         except Exception as e:
             print(e)
 
+    async def rtsalert(self):
+        pass
+
+    async def cep(self):
+        pass
+
+    async def qclient(self):
+        pass
+
 
 if __name__ == '__main__':
-    pass
+    asyncio.get_event_loop().run_forever()

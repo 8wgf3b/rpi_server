@@ -18,7 +18,7 @@ class Basic(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.qfeed = DiscordFeeder('databases/idx.json', 5011)
+        self.qfeed = DiscordFeeder('databases/idx.json', 5011, 5015, 5020)
 
     #  events
     @commands.Cog.listener()
@@ -41,7 +41,12 @@ class Basic(commands.Cog):
     async def gaid(self, ctx):
         logger.debug('gcid command')
         await ctx.send(ctx.message.author.id)
-        
+    
+    @commands.command()
+    async def statu(self, ctx, *, text):
+        logger.debug('gcid command')
+        id = text[3:-1]
+        await ctx.send(id)
         
     @commands.command()
     async def plic(self, ctx):
