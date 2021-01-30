@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # rpi_server
-Its a discord bot that uses cron expressions to schedule things and provide server analytics. This repo handles the communication between kdb and the bot and is part of the 3 repos that are used to run the bot. Checkout the other two:
+Formerly, I was using this branch to experiment with new features. Later I realized that not all features run on the cloud. Since then, I've been using this branch to write non-essential innovative features that operate on raspberry pi 4. This repo handles the communication between kdb and python and is a part of the three repos that the bot uses. Checkout the other two:
 
 * [Scheduler](https://github.com/8wgf3b/rpi_server)
 * [kdb side](https://github.com/8wgf3b/time-and-time-again)
