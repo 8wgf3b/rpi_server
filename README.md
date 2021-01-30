@@ -1,23 +1,13 @@
 # rpi_server
-Currently its just a discord bot that uses cron expressions to schedule things
+Its a discord bot that uses cron expressions to schedule things and provide server analytics. This repo handles the task scheduling side and is part of the 3 repos that are used to run the bot. Checkout the other two:
 
-* It can send top posts of the day of your favourite subreddits at any given time using cron expressions at UTC.
-* It can send random pic posts of any subreddit.
+* [Python-kdb interface](https://github.com/8wgf3b/rpi_server/tree/magic)
+* [kdb side](https://github.com/8wgf3b/time-and-time-again)
 
-# Bot Commands
-**Basics**
-* .sched : Schedules a task (cron should be given).
-* .gct (Get Channel Task) : Shows the scheduled tasks along with their task ID.
-* .dtbi (Delete Task By ID): Deletes the task given its task ID. 
-* .cct (Clear Channel Task) : Clears all the scheduled tasks.
-* .clear : Clears a specified amount of messages (default amount - 100).
-* .ping : Gives you ping in ms.
-
-**No Category**
-* .help : Shows a dialogue box with basic commands.
-* .help *command* : Get more info on a command.
-* .help *category* : Get more info on a cateogry.
-
+# Design of the scheduler
+![scheduler](https://github.com/8wgf3b/8wgf3b/blob/main/Page%202.png)
+# Where it fits in with the rest
+![big picture](https://github.com/8wgf3b/8wgf3b/blob/main/Page%201.png)
 
 # Join the test server
 https://discord.gg/S3kkpxP
