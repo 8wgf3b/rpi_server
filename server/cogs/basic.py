@@ -82,6 +82,18 @@ class Basic(commands.Cog):
         await ctx.channel.purge(limit=amount)
         logger.info(f'cleared {amount} messages from {cid}')
 
+    @commands.command()
+    async def covid(self, ctx, *, date):
+        url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict'
+        params = {'district_id': 581, 'date': date}
+        msg = 'CENTER: SLOTS_LEFT'                                 
+        c = requests.get(url, params).json()                                        
+        for s in c['sessions']:                                                     
+            if s['available_capacity'] != 0:                                        
+                msg += f"{s['name']}, {s['block_name']} : {s['available_capacity']}\n"
+        logger.info(f"COVID slots for {date}")
+        await ctx.send(msg)
+
 
 def setup(client):
     client.add_cog(Basic(client))
