@@ -6,6 +6,7 @@ from .helper.db import pretty_channel_tasks, delete_by_ids
 from .helper.db import append_bot_name, delete_botname_by_ids
 from .helper.db import fetch_all_bots, pretty_bots
 import logging
+import requests
 
 
 logger = logging.getLogger('rpi4.basic')
