@@ -85,18 +85,18 @@ class Basic(commands.Cog):
 
     @commands.command()
     async def covid(self, ctx, *, date):
-        print(date)
-        url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict'
-        params = {'district_id': 581, 'date': date}
-        msg = 'CENTER: SLOTS_LEFT'                                 
-        c = requests.get(url, params).json() 
-        print(c)                                       
-        for s in c['sessions']:                                                     
-            if s['available_capacity'] != 0:                                        
-                msg += f"{s['name']}, {s['block_name']} : {s['available_capacity']}\n"
-        logger.info(f"COVID slots for {date}")
-        await ctx.send(msg)
-
+        try:
+            url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict'
+            params = {'district_id': 581, 'date': date}
+            msg = 'CENTER: SLOTS_LEFT'                                 
+            c = requests.get(url, params).json() 
+            for s in c['sessions']:                                                     
+                if s['available_capacity'] != 0:                                        
+                    msg += f"{s['name']}, {s['block_name']} : {s['available_capacity']}\n"
+            logger.info(f"COVID slots for {date}")
+            await ctx.send(msg)
+        except Exception as e:
+            logger.exception(f"{c} {date}")
 
 def setup(client):
     client.add_cog(Basic(client))
